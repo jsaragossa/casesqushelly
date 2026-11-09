@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Domòtica casa: esquema i seguiment de compra</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ffffff; --panel:#f5f7f9; --ink:#1d2733; --ink2:#5b6672; --line:#d3dae1;
+  --hub:#1f6feb; --hub-bg:#e8f1ff;
+  --todo:#b45309; --todo-bg:#fff4e5;
+  --bought:#6d28d9; --bought-bg:#f1ebff;
+  --ok:#15803d; --ok-bg:#e7f6ec;
+  --info-bg:#eef1f4; --arrow:#8a96a3;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#11161c; --panel:#171d24; --ink:#e6edf3; --ink2:#9aa6b2; --line:#33404d;
+    --hub:#58a6ff; --hub-bg:#14263f;
+    --todo:#f0a35e; --todo-bg:#3a2a14;
+    --bought:#b69cff; --bought-bg:#271d40;
+    --ok:#4ade80; --ok-bg:#12301c;
+    --info-bg:#212a33; --arrow:#6b7785; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#11161c; --panel:#171d24; --ink:#e6edf3; --ink2:#9aa6b2; --line:#33404d;
+  --hub:#58a6ff; --hub-bg:#14263f;
+  --todo:#f0a35e; --todo-bg:#3a2a14;
+  --bought:#b69cff; --bought-bg:#271d40;
+  --ok:#4ade80; --ok-bg:#12301c;
+  --info-bg:#212a33; --arrow:#6b7785; color-scheme:dark;
+}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:15px;line-height:1.45}
+.wrap{max-width:1200px;margin:0 auto;padding:22px 18px 60px}
+h1,h2,h3{font-family:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;font-weight:600;margin:0;line-height:1.15}
+h1{font-size:32px}
+h2{font-size:23px;margin:28px 0 10px}
+h3{font-size:18px;margin-bottom:8px}
+.sub{color:var(--ink2);margin:4px 0 0;max-width:80ch}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:16px 0 6px}
+.btn{font:inherit;font-size:14px;font-weight:600;border:1.5px solid var(--hub);background:var(--hub);color:#fff;border-radius:6px;padding:7px 14px;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--hub)}
+.saved{font-size:13px;color:var(--ink2)}
+.summary{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 4px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 14px;min-width:120px}
+.stat b{display:block;font-family:"Barlow Condensed",sans-serif;font-size:26px;line-height:1}
+.stat span{font-size:13px;color:var(--ink2)}
+.progress{height:8px;background:var(--info-bg);border-radius:4px;overflow:hidden;margin:10px 0}
+.progress div{height:100%;background:var(--ok);width:0;transition:width .25s}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--ink2);margin:8px 0 14px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sq{width:14px;height:14px;border-radius:3px;border:1.5px solid}
+.hub{background:var(--hub-bg);border:2px solid var(--hub);border-radius:10px;padding:12px 16px;margin-bottom:12px}
+.hub h3{color:var(--hub);margin:0}
+.ints{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.ints span{font-size:13px;font-weight:600;background:var(--bg);color:var(--hub);border:1px solid var(--hub);border-radius:4px;padding:2px 8px}
+.net{background:var(--info-bg);border:1px dashed var(--arrow);border-radius:8px;padding:8px 12px;font-size:14px;margin-bottom:12px;color:var(--ink2)}
+.row{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px}
+.chain{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.chain + .chain{margin-top:8px}
+.arrow{color:var(--arrow);font-size:13px;font-weight:600}
+.node{border-radius:6px;padding:5px 10px;font-size:14px;font-weight:500;border:1.5px solid transparent;line-height:1.25}
+.node small{display:block;font-size:12px;font-weight:400;opacity:.85}
+.node.info{background:var(--info-bg)}
+.node.ha{background:var(--hub-bg);color:var(--hub);border-color:var(--hub);font-weight:600}
+a.chip{text-decoration:none;font-weight:600;cursor:pointer}
+.chip[data-s="todo"]{background:var(--todo-bg);color:var(--todo);border-color:var(--todo)}
+.chip[data-s="bought"]{background:var(--bought-bg);color:var(--bought);border-color:var(--bought)}
+.chip[data-s="ok"]{background:var(--ok-bg);color:var(--ok);border-color:var(--ok)}
+.mods{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;margin-top:10px}
+.mod{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:7px 10px;font-size:13px}
+.mod b{display:block;margin-bottom:2px}
+.mod i{color:var(--ink2)}
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:760px}
+th,td{padding:8px 10px;text-align:left;vertical-align:middle;border-bottom:1px solid var(--line)}
+th{font-family:"Barlow Condensed",sans-serif;font-weight:600;font-size:15px;background:var(--panel)}
+tr:last-child td{border-bottom:0}
+td.name{font-weight:600}
+td.name small{display:block;font-weight:400;color:var(--ink2);font-size:12px}
+.badge{display:inline-block;font-size:12px;font-weight:600;border-radius:4px;padding:2px 8px;border:1px solid;white-space:nowrap}
+.badge[data-s="todo"]{background:var(--todo-bg);color:var(--todo);border-color:var(--todo)}
+.badge[data-s="bought"]{background:var(--bought-bg);color:var(--bought);border-color:var(--bought)}
+.badge[data-s="ok"]{background:var(--ok-bg);color:var(--ok);border-color:var(--ok)}
+input[type=checkbox]{width:18px;height:18px;accent-color:var(--ok);vertical-align:middle}
+input[type=date],input[type=url]{font:inherit;font-size:13px;padding:4px 6px;border:1px solid var(--line);border-radius:5px;background:var(--bg);color:var(--ink)}
+input[type=url]{width:100%;min-width:170px}
+input:disabled{opacity:.35}
+.link-cell{display:flex;gap:6px;align-items:center}
+.link-cell a{font-size:13px;font-weight:600;color:var(--hub);white-space:nowrap}
+.notes{margin:0;padding-left:20px}
+.notes li{margin-bottom:6px;max-width:95ch}
+.foot{margin-top:28px;font-size:13px;color:var(--ink2)}
+@media print{.toolbar,.no-print{display:none}input[type=url]{border:0}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Domòtica de casa: esquema i seguiment de compra</h1>
+  <p class="sub">Com es connecta cada sistema fins a Home Assistant, què cal comprar, l’enllaç de cada producte i quan arriba. Document compartit entre en Jordi i l’electricista.</p>
+
+  <div class="toolbar no-print">
+    <button class="btn" id="saveCopy">Descarregar còpia amb l’estat actual</button>
+    <button class="btn ghost" id="resetLocal">Tornar a l’estat del fitxer</button>
+    <span class="saved" id="savedInfo"></span>
+  </div>
+  <p class="sub no-print" style="font-size:13px">Els canvis es guarden en aquest navegador. Per compartir-los, descarrega la còpia i puja-la a GitHub substituint aquest fitxer.</p>
+
+  <div class="summary">
+    <div class="stat"><b id="sTodo">0</b><span>per comprar</span></div>
+    <div class="stat"><b id="sBought">0</b><span>comprats, pendents d’arribar</span></div>
+    <div class="stat"><b id="sOk">0</b><span>rebuts</span></div>
+  </div>
+  <div class="progress"><div id="bar"></div></div>
+  <div class="legend">
+    <span><span class="sq" style="background:var(--todo-bg);border-color:var(--todo)"></span>Per comprar</span>
+    <span><span class="sq" style="background:var(--bought-bg);border-color:var(--bought)"></span>Comprat</span>
+    <span><span class="sq" style="background:var(--ok-bg);border-color:var(--ok)"></span>Rebut</span>
+    <span><span class="sq" style="background:var(--info-bg);border-color:var(--info-bg)"></span>Ja inclòs a l’obra</span>
+  </div>
+
+  <h2>1. Esquema de connexions</h2>
+
+  <div class="hub">
+    <div class="chain"><h3>Home Assistant</h3><span class="chip node" data-item="ha"></span></div>
+    <div class="ints"><span>Shelly</span><span>Matter</span><span>Local Akuvox</span><span>Asterisk + SIP Core</span><span>Midea</span></div>
+  </div>
+  <div class="net"><strong>Xarxa de casa</strong> (router, switch PoE, punts wifi, SAI): pendent de decidir. Totes les fletxes “xarxa” hi passen.</div>
+
+  <section class="row">
+    <h3>Llums (14 grups)</h3>
+    <div class="chain">
+      <span class="node info">Polsadors de paret<small>cablejats fins al quadre</small></span>
+      <span class="arrow">→ entrades →</span>
+      <span class="chip node" data-item="pm"></span>
+      <span class="arrow">→ Ethernet →</span>
+      <span class="chip node" data-item="lan"></span>
+      <span class="arrow">→ 2 cables fins a telecom (1 de reserva) →</span>
+      <span class="node ha">HA · Shelly</span>
+    </div>
+    <div class="mods">
+      <div class="mod"><b>Pro 4PM nº 1</b>1 Rebedor · 7 Bany esquerre · 11 Tira LED prestatges · 16 Porxo</div>
+      <div class="mod"><b>Pro 4PM nº 2</b>2 Despatx · 3 Bany dret, sostre · 9 Dormitori · 14 Sala, LED</div>
+      <div class="mod"><b>Pro 4PM nº 3</b>4 Bany dret, rentamans · 5 Sala de màquines · 13 Menjador · 15 Exterior i jardí</div>
+      <div class="mod"><b>Pro 4PM nº 4</b>6 Mirall bany esquerre · 10 Vestidor · <i>2 canals de reserva</i></div>
+    </div>
+  </section>
+
+  <section class="row">
+    <h3>Llum regulable de la cuina (grup 12)</h3>
+    <div class="chain">
+      <span class="node info">Llum penjat amb driver DALI</span>
+      <span class="arrow">← bus DALI 2 fils ←</span>
+      <span class="chip node" data-item="dali"></span>
+      <span class="arrow">→ wifi →</span>
+      <span class="node ha">HA · Shelly</span>
+    </div>
+  </section>
+
+  <section class="row">
+    <h3>Persianes (7)</h3>
+    <div class="chain">
+      <span class="node info">7 motors Lamisol BiLine<small>230 V a cada motor</small></span>
+      <span class="arrow">→ ràdio →</span>
+      <span class="chip node" data-item="biline"></span>
+      <span class="arrow">→ xarxa, Matter →</span>
+      <span class="node ha">HA · Matter</span>
+    </div>
+  </section>
+
+  <section class="row">
+    <h3>Porta de vianants</h3>
+    <div class="chain">
+      <span class="chip node" data-item="pany"></span>
+      <span class="arrow">← alimentat per ←</span>
+      <span class="chip node" data-item="font"></span>
+      <span class="arrow">dins de</span>
+      <span class="chip node" data-item="caixa"></span>
+    </div>
+    <div class="chain">
+      <span class="node info">Pany</span>
+      <span class="arrow">← relé 1 ←</span>
+      <span class="chip node" data-item="r25a"></span>
+      <span class="arrow">← entrada 1 ←</span>
+      <span class="chip node" data-item="sensporta"></span>
+    </div>
+    <div class="chain">
+      <span class="node info">R25A</span>
+      <span class="arrow">→ CAT6 PoE ~50 m →</span>
+      <span class="node ha">HA · Local Akuvox</span>
+    </div>
+  </section>
+
+  <section class="row">
+    <h3>Porta corredera de cotxes</h3>
+    <div class="chain">
+      <span class="node info">Motor i centraleta<small>entrada pas a pas</small></span>
+      <span class="arrow">← relé 2 de l’R25A (tub ~5 m) ←</span>
+      <span class="node info">R25A</span>
+      <span class="arrow">← entrada 2 ←</span>
+      <span class="chip node" data-item="senscorr"></span>
+    </div>
+    <div class="chain">
+      <span class="node info">El mateix R25A</span>
+      <span class="arrow">→ xarxa →</span>
+      <span class="node ha">HA · Local Akuvox</span>
+      <span class="arrow">· el comandament del motor continua funcionant</span>
+    </div>
+  </section>
+
+  <section class="row">
+    <h3>Veu del videoporter</h3>
+    <div class="chain">
+      <span class="node info">R25A<small>trucada SIP</small></span>
+      <span class="arrow">→ xarxa →</span>
+      <span class="node ha">HA · Asterisk + SIP Core</span>
+      <span class="arrow">→</span>
+      <span class="node info">Panell iPad i mòbils</span>
+    </div>
+  </section>
+
+  <section class="row">
+    <h3>Aire condicionat (3 unitats)</h3>
+    <div class="chain">
+      <span class="node info">Despatx, menjador, dormitori<small>unitats de conductes Kosner</small></span>
+      <span class="arrow">→</span>
+      <span class="node info">3 comandaments KJR-120XT<small>amb wifi</small></span>
+      <span class="arrow">→ wifi →</span>
+      <span class="node ha">HA · Midea</span>
+    </div>
+  </section>
+
+  <section class="row">
+    <h3>Panell de control</h3>
+    <div class="chain">
+      <span class="chip node" data-item="ipad"></span>
+      <span class="arrow">+</span>
+      <span class="chip node" data-item="dame"></span>
+      <span class="arrow">←</span>
+      <span class="chip node" data-item="poe"></span>
+      <span class="arrow">← cable PoE (ja fet) ← xarxa →</span>
+      <span class="node ha">HA · app</span>
+    </div>
+  </section>
+
+  <h2>2. Llista de compra i seguiment</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Producte</th><th>Quant.</th><th>Enllaç</th><th>Comprat</th><th>Arriba el</th><th>Rebut</th><th>Estat</th></tr></thead>
+      <tbody id="items"></tbody>
+    </table>
+  </div>
+
+  <h2>3. Notes per a l’electricista</h2>
+  <ul class="notes">
+    <li>Els Shelly van darrere dels magnetotèrmics i diferencials, que continuen sent necessaris. Si cal, un quadre secundari de domòtica alimentat des del principal.</li>
+    <li>Tots els interruptors són polsadors, cablejats fins a les entrades dels Shelly Pro 4PM.</li>
+    <li>2 cables Ethernet des de la caixa de telecomunicacions fins al quadre dels Shelly: un per al LAN Switch i un de reserva.</li>
+    <li>El Shelly DALI Dimmer Gen3 no és de carril DIN: cal un adaptador o un espai al quadre. Bus DALI de 2 fils fins al llum de la cuina.</li>
+    <li>Grup 15: línies separades per zones (façanes, jardí) fins al quadre, unides al mateix canal.</li>
+    <li>Tanca: CAT6 d’exterior (~50 m), línia de 230 V del motor, línies del grup 15 i un tub de reserva. Tub de ~5 m amb mànega de 4 fils entre l’R25A i el motor.</li>
+    <li>Persianes i aire condicionat: no necessiten res al quadre de domòtica.</li>
+  </ul>
+
+  <p class="foot">Última actualització de l’estat: <span id="updated">sense canvis</span></p>
+</div>
+
+<script type="application/json" id="embedded-state">{}</script>
+<script>
+const ITEMS=[
+  {id:"ha",name:"Home Assistant Green",where:"Caixa de telecomunicacions",qty:"1",url:"https://www.home-assistant.io/green/"},
+  {id:"pm",name:"Shelly Pro 4PM",where:"Quadre elèctric",qty:"4",url:"https://www.shelly.com/products/shelly-pro-4pm"},
+  {id:"lan",name:"Shelly LAN Switch",where:"Quadre elèctric",qty:"1",url:"https://www.shelly.com/products/shelly-lan-switch"},
+  {id:"dali",name:"Shelly DALI Dimmer Gen3",where:"Quadre elèctric",qty:"1",url:"https://www.shelly.com/products/shelly-dali-dimmer-gen3"},
+  {id:"biline",name:"Griesser BiLine Box",where:"Caixa de telecomunicacions",qty:"1",url:"https://www.griesser.com/es/es/productos/smart-home/"},
+  {id:"r25a",name:"Akuvox R25A",where:"Tanca, amb caixa d’encastar",qty:"1",url:"https://es.akuvox.com/product/door-phone/988.html"},
+  {id:"pany",name:"Pany elèctric 12 V",where:"Porta de vianants",qty:"1",url:""},
+  {id:"font",name:"Font 12 V",where:"Tanca, caixa estanca",qty:"1",url:""},
+  {id:"caixa",name:"Caixa estanca",where:"Tanca",qty:"1",url:""},
+  {id:"sensporta",name:"Sensor magnètic porta de vianants",where:"Tanca",qty:"1",url:""},
+  {id:"senscorr",name:"Sensor d’estat de la corredera",where:"Tanca",qty:"1",url:""},
+  {id:"ipad",name:"iPad Air 11\" M4, 128 GB",where:"Paret del panell",qty:"1",url:"https://www.apple.com/es/ipad-air/"},
+  {id:"dame",name:"Dame Wall Home 2.0 per a iPad Air",where:"Paret del panell",qty:"1",url:""},
+  {id:"poe",name:"Displine PoE Converter 10 W",where:"Paret del panell",qty:"1",url:""}
+];
+const KEY="domotica-casa-estat-v1";
+let embedded={};
+try{embedded=JSON.parse(document.getElementById("embedded-state").textContent||"{}")||{}}catch(e){embedded={}}
+let state=null;
+try{const raw=localStorage.getItem(KEY); if(raw){state=JSON.parse(raw)}}catch(e){}
+if(!state||typeof state!=="object"){state=JSON.parse(JSON.stringify(embedded))}
+if(!state.items)state.items={};
+function st(id){if(!state.items[id])state.items[id]={};return state.items[id]}
+function urlOf(it){const s=state.items[it.id];return (s&&typeof s.url==="string")?s.url:it.url}
+function statusOf(id){const s=state.items[id]||{};if(s.received)return"ok";if(s.bought)return"bought";return"todo"}
+function fmtDate(d){if(!d)return"";const [y,m,dd]=d.split("-");return dd+"/"+m+"/"+y}
+function save(){
+  state.updated=new Date().toISOString();
+  try{localStorage.setItem(KEY,JSON.stringify(state));document.getElementById("savedInfo").textContent="Desat en aquest navegador"}catch(e){document.getElementById("savedInfo").textContent="No s’ha pogut desar en aquest navegador"}
+  render();
+}
+const tbody=document.getElementById("items");
+function buildTable(){
+  tbody.innerHTML="";
+  ITEMS.forEach(it=>{
+    const tr=document.createElement("tr");tr.dataset.id=it.id;
+    tr.innerHTML=`
+      <td class="name">${it.name}<small>${it.where}</small></td>
+      <td>${it.qty}</td>
+      <td><div class="link-cell"><input type="url" placeholder="Enganxa l’enllaç" aria-label="Enllaç de ${it.name}"><a target="_blank" rel="noopener">Obrir</a></div></td>
+      <td><input type="checkbox" class="cb-bought" aria-label="Comprat"></td>
+      <td><input type="date" class="in-date" aria-label="Data d’arribada"></td>
+      <td><input type="checkbox" class="cb-recv" aria-label="Rebut"></td>
+      <td><span class="badge"></span></td>`;
+    const s=()=>st(it.id);
+    tr.querySelector("input[type=url]").addEventListener("change",e=>{s().url=e.target.value.trim();save()});
+    tr.querySelector(".cb-bought").addEventListener("change",e=>{s().bought=e.target.checked;if(!e.target.checked){s().received=false}save()});
+    tr.querySelector(".in-date").addEventListener("change",e=>{s().arrival=e.target.value;save()});
+    tr.querySelector(".cb-recv").addEventListener("change",e=>{s().received=e.target.checked;if(e.target.checked)s().bought=true;save()});
+    tbody.appendChild(tr);
+  });
+}
+function render(){
+  let c={todo:0,bought:0,ok:0};
+  ITEMS.forEach(it=>{
+    const s=state.items[it.id]||{};const status=statusOf(it.id);c[status]++;
+    const tr=tbody.querySelector(`tr[data-id="${it.id}"]`);
+    const u=urlOf(it);
+    const urlIn=tr.querySelector("input[type=url]");if(document.activeElement!==urlIn)urlIn.value=u;
+    const a=tr.querySelector(".link-cell a");if(u){a.href=u;a.style.display=""}else{a.removeAttribute("href");a.style.display="none"}
+    tr.querySelector(".cb-bought").checked=!!s.bought;
+    const d=tr.querySelector(".in-date");d.value=s.arrival||"";d.disabled=!s.bought;
+    const r=tr.querySelector(".cb-recv");r.checked=!!s.received;r.disabled=!s.bought;
+    const b=tr.querySelector(".badge");b.dataset.s=status;
+    b.textContent=status==="ok"?"Rebut":status==="bought"?(s.arrival?"Arriba el "+fmtDate(s.arrival):"Comprat"):"Per comprar";
+  });
+  document.querySelectorAll(".chip[data-item]").forEach(el=>{
+    const it=ITEMS.find(x=>x.id===el.dataset.item);if(!it)return;
+    const s=state.items[it.id]||{};const status=statusOf(it.id);
+    const label=status==="ok"?"Rebut":status==="bought"?(s.arrival?"Arriba el "+fmtDate(s.arrival):"Comprat"):"Per comprar";
+    const u=urlOf(it);
+    const html=`${it.qty!=="1"?it.qty+" × ":""}${it.name}<small>${label}</small>`;
+    let node=el;
+    if(u&&el.tagName!=="A"){const a=document.createElement("a");a.className=el.className;a.dataset.item=el.dataset.item;a.target="_blank";a.rel="noopener";el.replaceWith(a);node=a}
+    if(!u&&el.tagName==="A"){const sp=document.createElement("span");sp.className=el.className;sp.dataset.item=el.dataset.item;el.replaceWith(sp);node=sp}
+    if(u)node.href=u;
+    node.innerHTML=html;node.dataset.s=status;
+  });
+  document.getElementById("sTodo").textContent=c.todo;
+  document.getElementById("sBought").textContent=c.bought;
+  document.getElementById("sOk").textContent=c.ok;
+  document.getElementById("bar").style.width=((c.bought*0.5+c.ok)/ITEMS.length*100)+"%";
+  document.getElementById("updated").textContent=state.updated?new Date(state.updated).toLocaleString("ca-ES"):"sense canvis";
+}
+document.getElementById("saveCopy").addEventListener("click",()=>{
+  const clone=document.documentElement.cloneNode(true);
+  clone.querySelector("#embedded-state").textContent=JSON.stringify(state);
+  clone.querySelector("#items").innerHTML="";
+  clone.querySelector("#savedInfo").textContent="";
+  const html="<!DOCTYPE html>\n"+clone.outerHTML;
+  const blob=new Blob([html],{type:"text/html"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="domotica-casa.html";
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+});
+document.getElementById("resetLocal").addEventListener("click",()=>{
+  if(!confirm("Vols descartar els canvis d’aquest navegador i tornar a l’estat guardat al fitxer?"))return;
+  try{localStorage.removeItem(KEY)}catch(e){}
+  state=JSON.parse(JSON.stringify(embedded));if(!state.items)state.items={};
+  document.getElementById("savedInfo").textContent="";render();
+});
+buildTable();render();
+</script>
+</body>
+</html>
