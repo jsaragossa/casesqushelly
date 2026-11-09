@@ -113,11 +113,11 @@ input:disabled{opacity:.35}
   <p class="sub no-print" style="font-size:13px">Els canvis es guarden en aquest navegador. Per compartir-los, descarrega la còpia i puja-la a GitHub substituint aquest fitxer.</p>
 
   <div class="summary">
-    <div class="stat"><b id="sTodo">10</b><span>per comprar</span></div>
-    <div class="stat"><b id="sBought">4</b><span>comprats, pendents d’arribar</span></div>
+    <div class="stat"><b id="sTodo">8</b><span>per comprar</span></div>
+    <div class="stat"><b id="sBought">6</b><span>comprats, pendents d’arribar</span></div>
     <div class="stat"><b id="sOk">0</b><span>rebuts</span></div>
   </div>
-  <div class="progress"><div id="bar" style="width: 14.2857%;"></div></div>
+  <div class="progress"><div id="bar" style="width: 21.4286%;"></div></div>
   <div class="legend">
     <span><span class="sq" style="background:var(--todo-bg);border-color:var(--todo)"></span>Per comprar</span>
     <span><span class="sq" style="background:var(--bought-bg);border-color:var(--bought)"></span>Comprat</span>
@@ -241,9 +241,9 @@ input:disabled{opacity:.35}
     <div class="chain">
       <a class="chip node" data-item="ipad" target="_blank" rel="noopener" href="https://www.apple.com/es/ipad-air/" data-s="todo">iPad Air 11" M4, 128 GB<small>Per comprar</small></a>
       <span class="arrow">+</span>
-      <span class="chip node" data-item="dame" data-s="todo">Dame Wall Home 2.0 per a iPad Air<small>Per comprar</small></span>
+      <a class="chip node" data-item="dame" target="_blank" rel="noopener" href="https://displine.com/en-eu/products/dame-wall-home-2-0-for-ipad-air" data-s="bought">Dame Wall Home 2.0 per a iPad Air<small>Arriba el 16/11/2026</small></a>
       <span class="arrow">←</span>
-      <span class="chip node" data-item="poe" data-s="todo">Displine PoE Converter 10 W<small>Per comprar</small></span>
+      <a class="chip node" data-item="poe" target="_blank" rel="noopener" href="https://displine.com/en-eu/products/displine-poe-converter-10w" data-s="bought">Displine PoE Converter 10 W<small>Arriba el 16/11/2026</small></a>
       <span class="arrow">← cable PoE (ja fet) ← xarxa →</span>
       <span class="node ha">HA · app</span>
     </div>
@@ -268,10 +268,10 @@ input:disabled{opacity:.35}
     <li>Persianes i aire condicionat: no necessiten res al quadre de domòtica.</li>
   </ul>
 
-  <p class="foot">Última actualització de l’estat: <span id="updated">9/11/2026 13:15:41</span></p>
+  <p class="foot">Última actualització de l’estat: <span id="updated">9/11/2026 13:52:05</span></p>
 </div>
 
-<script type="application/json" id="embedded-state">{"items":{"pm":{"bought":true,"arrival":"2026-11-12"},"lan":{"bought":true,"arrival":"2026-11-12"},"dali":{"bought":true,"arrival":"2026-11-12"},"r25a":{"bought":true}},"updated":"2026-11-09T12:15:41.359Z"}</script>
+<script type="application/json" id="embedded-state">{"items":{"pm":{"bought":true,"arrival":"2026-11-12"},"lan":{"bought":true,"arrival":"2026-11-12"},"dali":{"bought":true,"arrival":"2026-11-12"},"r25a":{"bought":true},"dame":{"bought":true,"url":"https://displine.com/en-eu/products/dame-wall-home-2-0-for-ipad-air","arrival":"2026-11-16"},"poe":{"bought":true,"url":"https://displine.com/en-eu/products/displine-poe-converter-10w","arrival":"2026-11-16"}},"updated":"2026-11-09T12:52:05.333Z"}</script>
 <script>
 const ITEMS=[
   {id:"ha",name:"Home Assistant Green",where:"Caixa de telecomunicacions",qty:"1",url:"https://www.home-assistant.io/green/"},
