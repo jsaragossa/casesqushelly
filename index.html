@@ -114,10 +114,10 @@ input:disabled{opacity:.35}
 
   <div class="summary">
     <div class="stat"><b id="sTodo">8</b><span>per comprar</span></div>
-    <div class="stat"><b id="sBought">6</b><span>comprats, pendents d’arribar</span></div>
-    <div class="stat"><b id="sOk">0</b><span>rebuts</span></div>
+    <div class="stat"><b id="sBought">3</b><span>comprats, pendents d’arribar</span></div>
+    <div class="stat"><b id="sOk">3</b><span>rebuts</span></div>
   </div>
-  <div class="progress"><div id="bar" style="width: 21.4286%;"></div></div>
+  <div class="progress"><div id="bar" style="width: 32.1429%;"></div></div>
   <div class="legend">
     <span><span class="sq" style="background:var(--todo-bg);border-color:var(--todo)"></span>Per comprar</span>
     <span><span class="sq" style="background:var(--bought-bg);border-color:var(--bought)"></span>Comprat</span>
@@ -138,9 +138,9 @@ input:disabled{opacity:.35}
     <div class="chain">
       <span class="node info">Polsadors de paret<small>cablejats fins al quadre</small></span>
       <span class="arrow">→ entrades →</span>
-      <a class="chip node" data-item="pm" target="_blank" rel="noopener" href="https://www.shelly.com/products/shelly-pro-4pm" data-s="bought">4 × Shelly Pro 4PM<small>Arriba el 12/11/2026</small></a>
+      <a class="chip node" data-item="pm" target="_blank" rel="noopener" href="https://www.shelly.com/products/shelly-pro-4pm" data-s="ok">4 × Shelly Pro 4PM<small>Rebut</small></a>
       <span class="arrow">→ Ethernet →</span>
-      <a class="chip node" data-item="lan" target="_blank" rel="noopener" href="https://www.shelly.com/products/shelly-lan-switch" data-s="bought">Shelly LAN Switch<small>Arriba el 12/11/2026</small></a>
+      <a class="chip node" data-item="lan" target="_blank" rel="noopener" href="https://www.shelly.com/products/shelly-lan-switch" data-s="ok">Shelly LAN Switch<small>Rebut</small></a>
       <span class="arrow">→ 2 cables fins a telecom (1 de reserva) →</span>
       <span class="node ha">HA · Shelly</span>
     </div>
@@ -157,7 +157,7 @@ input:disabled{opacity:.35}
     <div class="chain">
       <span class="node info">Llum penjat amb driver DALI</span>
       <span class="arrow">← bus DALI 2 fils ←</span>
-      <a class="chip node" data-item="dali" target="_blank" rel="noopener" href="https://www.shelly.com/products/shelly-dali-dimmer-gen3" data-s="bought">Shelly DALI Dimmer Gen3<small>Arriba el 12/11/2026</small></a>
+      <a class="chip node" data-item="dali" target="_blank" rel="noopener" href="https://www.shelly.com/products/shelly-dali-dimmer-gen3" data-s="ok">Shelly DALI Dimmer Gen3<small>Rebut</small></a>
       <span class="arrow">→ wifi →</span>
       <span class="node ha">HA · Shelly</span>
     </div>
@@ -268,10 +268,10 @@ input:disabled{opacity:.35}
     <li>Persianes i aire condicionat: no necessiten res al quadre de domòtica.</li>
   </ul>
 
-  <p class="foot">Última actualització de l’estat: <span id="updated">9/11/2026 13:52:05</span></p>
+  <p class="foot">Última actualització de l’estat: <span id="updated">13/11/2026 9:13:30</span></p>
 </div>
 
-<script type="application/json" id="embedded-state">{"items":{"pm":{"bought":true,"arrival":"2026-11-12"},"lan":{"bought":true,"arrival":"2026-11-12"},"dali":{"bought":true,"arrival":"2026-11-12"},"r25a":{"bought":true},"dame":{"bought":true,"url":"https://displine.com/en-eu/products/dame-wall-home-2-0-for-ipad-air","arrival":"2026-11-16"},"poe":{"bought":true,"url":"https://displine.com/en-eu/products/displine-poe-converter-10w","arrival":"2026-11-16"}},"updated":"2026-11-09T12:52:05.333Z"}</script>
+<script type="application/json" id="embedded-state">{"items":{"pm":{"bought":true,"arrival":"2026-11-12","received":true},"lan":{"bought":true,"arrival":"2026-11-12","received":true},"dali":{"bought":true,"arrival":"2026-11-12","received":true},"r25a":{"bought":true},"dame":{"bought":true,"url":"https://displine.com/en-eu/products/dame-wall-home-2-0-for-ipad-air","arrival":"2026-11-16"},"poe":{"bought":true,"url":"https://displine.com/en-eu/products/displine-poe-converter-10w","arrival":"2026-11-16"}},"updated":"2026-11-13T08:13:30.095Z"}</script>
 <script>
 const ITEMS=[
   {id:"ha",name:"Home Assistant Green",where:"Caixa de telecomunicacions",qty:"1",url:"https://www.home-assistant.io/green/"},
